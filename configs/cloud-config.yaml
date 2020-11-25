@@ -1,0 +1,12 @@
+#cloud-config
+write_files:
+  - path: /tmp/auth_params.conf
+    permissions: "0600"
+    owner: root:root
+    encoding: b64
+    content: ${auth_params}
+  - path: /tmp/vertica.conf
+    permissions: "0600"
+    owner: root:root
+    encoding: b64
+    content: ${vertica_params}

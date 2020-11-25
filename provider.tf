@@ -1,4 +1,10 @@
 terraform {
+  backend "s3" {
+    bucket = "kavala13-test"
+    key    = "terraform/state/vertica-instance"
+    region = "us-east-1"
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

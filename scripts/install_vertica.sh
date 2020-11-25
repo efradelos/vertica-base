@@ -1,9 +1,22 @@
 #!/bin/bash
-cat << EOF2 | su - ${user}
-  ssh -T ${ip_addrs[0]} << EOF
-    sudo /opt/vertica/sbin/install_vertica -s ${ join(",", ip_addrs) } -Y -T -i ~${user}/.ssh/id_rsa
-EOF
-EOF2
+# until [[ -f /tmp/auth_ready ]]; do
+#   sleep 1
+# done
 
+# if [[ -f /tmp/vertica.conf ]]; then
+#   sleep 60
+#   cat << EOF | su - dbadmin
+#     sudo /opt/vertica/sbin/install_vertica -z /tmp/vertica.conf
+#     /opt/vertica/bin/admintools -t create_db \
+#       -d ${db} \
+#       -p ${password} \
+#       -s ${ join(",", hosts) } \
+#       --shard-count=${shard_count} \
+#       --communal-storage-location=${communal_storage} \
+#       --depot-path=${depot_path} \
+#       -x /tmp/auth_params.conf
+# EOF
+# fi
 
-
+#  rm /tmp/vertica.conf
+# rm /tmp/auth_params.conf

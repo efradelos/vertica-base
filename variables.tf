@@ -5,37 +5,26 @@ variable "AWS_REGION" {
 }
 
 variable "PATH_TO_PRIVATE_KEY" {
-  default = "mykey"
+  default = "secrets/mykey"
 }
 
 variable "PATH_TO_PUBLIC_KEY" {
-  default = "mykey.pub"
-}
-
-variable "AMIS" {
-  type = map
-  default = {
-  }
+  default = "secrets/mykey.pub"
 }
 
 variable "INSTANCE_USERNAME" {
-  # default = "ec2-user"
-  default = "dbadmin"
+  default = "ec2-user"
 }
 
 variable "NODE_COUNT" {
   default = "3"
-  # default = "0"
 }
 
 variable "NODE_AMI" {
-  # default = "ami-0947d2ba12ee1ff75"
   default = "ami-083bcfe5f5bf588bd"
 }
 
 variable "NODE_INSTANCE_TYPE" {
-  # default = "c5d.4xlarge"
-  # default = "t2.micro"
   default = "c5.large"
 }
 
@@ -45,23 +34,26 @@ variable "NODE_VOLUME_SIZE" {
 
 variable "MANAGEMENT_ENABLED" {
   default = true
-  # default = false
 }
 
 variable "MANAGEMENT_AMI" {
-  # default = "ami-0947d2ba12ee1ff75"
   default = "ami-083bcfe5f5bf588bd"
 }
 
 variable "MANAGEMENT_INSTANCE_TYPE" {
-  # default = "c5d.4xlarge"
-  # default = "t2.micro"
-  # default = "t2.nano"
   default = "c5.large"
 }
 
 variable "MANAGEMENT_VOLUME_SIZE" {
   default = 50
+}
+
+variable DATABASE_NAME {
+  default = "database-1"
+}
+
+variable DATABASE_PASSWORD {
+  default = "dbadmin"
 }
 
 variable "EON_MODE" {
@@ -70,4 +62,10 @@ variable "EON_MODE" {
 
 variable "EON_SHARD_COUNT" {
   default = 6
+}
+
+variable "EON_COMMUNAL_STORAGE" { }
+
+variable "EON_DEPOT_PATH" { 
+  default = "/vertica/data"
 }

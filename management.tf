@@ -17,7 +17,7 @@ resource "aws_instance" "management" {
   }
 
   provisioner "file" {
-    source      = "mykey"
+    source      = "secrets/mykey"
     destination = "key"
   }
 
