@@ -2,6 +2,19 @@ variable "aws_region" {}
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
 
+# VPC variables
+variable "vpc_id" {
+  description = "ID of VPC to install vertica cluster"
+}
+
+variable "public_subnet_id" {
+  description = "ID of public subnet to install vertica cluster. Used for bastion"
+}
+
+variable "private_subnet_id" {
+  description = "ID of public subnet to install vertica cluster. Used for nodes"
+}
+
 # DB Variables
 variable "dba_user" {
   description = "The name of the db user account"
@@ -49,20 +62,6 @@ variable "db_depot_path" {
 }
 
 
-# VPC variables
-variable "vpc_id" {
-  description = "ID of VPC to install vertica cluster"
-}
-
-variable "public_subnet_id" {
-  description = "ID of public subnet to install vertica cluster. Used for bastion"
-}
-
-variable "private_subnet_id" {
-  description = "ID of public subnet to install vertica cluster. Used for nodes"
-}
-
-
 # SSH key variables
 variable "create_ssh_key_pair" {
   description = "Determines if AWS key pair for ssh is created"
@@ -75,14 +74,14 @@ variable "ssh_key_name" {
 }
 variable "ssh_key_path" {
   description = "Path of public key for ssh. Only used of create_ssh_key_pair is true"
-  default     = ""
+  default     = "secrets/key"
 }
 
 
 # Node variables
 variable "node_count" {
   description = "Number of nodes in cluster"
-  default     = "3"
+  default     = 3
 }
 
 variable "node_ami" {
@@ -118,13 +117,15 @@ variable "bastion_allocation_id" {
 
 variable "install_key" {
   description = "Path to public key used for one time ssh configutation"
+  default     = "secrets/install.pub"
 }
 
 variable "private_install_key" {
   description = "Path to private key used for one time ssh configutation"
+  default     = "secrets/install"
 }
 
 variable "create_lb" {
   description = "Create a loadbalancer to access nodes in cluster"
   default     = false
-} 
+}
