@@ -123,3 +123,8 @@ variable "install_key" {
 variable "private_install_key" {
   description = "Path to private key used for one time ssh configutation"
 }
+
+variable "create_lb" {
+  description = "Create a loadbalancer to access nodes in cluster"
+  default     = false
+} 

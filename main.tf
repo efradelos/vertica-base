@@ -50,10 +50,11 @@ module "bastion" {
 }
 
 module "lb" {
-  count     = 0
-  source    = "./modules/lb"
+  count  = var.create_lb ? 1 : 0
+  source = "./modules/lb"
+
   vpc_id    = var.vpc_id
   subnet_id = var.public_subnet_id
 
-  nodes = module.vertica_nodes.ids
+  node_ids = module.vertica_nodes.ids
 }

@@ -12,3 +12,8 @@ output "node_private_ips" {
   description = "List of private ips of nodes"
   value       = module.vertica_nodes.private_ips
 }
+
+output "lb_dns_name" {
+  description = "DNS Name of Load Balancer"
+  value       = module.lb.*.dns_name
+}

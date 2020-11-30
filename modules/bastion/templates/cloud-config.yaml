@@ -8,11 +8,3 @@ write_files:
     permissions: "0600"
     encoding: b64
     content: "${aws_conf}"
-  - path: /tmp/deploy/vertica.conf
-    permissions: "0600"
-    encoding: b64
-    content: "${vertica_conf}"
-  - path: /tmp/deploy/install_vertica.sh
-    permissions: "0600"
-    encoding: b64
-    content: "${install_script}"

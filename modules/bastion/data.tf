@@ -8,20 +8,12 @@ locals {
     }
   )
 
-  vertica_conf = templatefile(
-    "${path.module}/templates/vertica.conf",
-    {
-      hosts = var.node_hosts,
-      user  = var.dba_user
-    }
-  )
-
-  install_script = templatefile(
+  install_vertica = templatefile(
     "${path.module}/templates/install_vertica.sh",
     {
+      user             = var.dba_user,
       hosts            = var.node_hosts,
       data_dir         = var.db_data_dir,
-      user             = var.dba_user,
       license          = var.db_license,
       database         = var.db_name,
       password         = var.db_password,
@@ -33,13 +25,6 @@ locals {
 
   cloud_config = "${path.module}/templates/cloud-config.yaml"
 
-  ssh_init = templatefile(
-    "${path.module}/templates/ssh-init.sh",
-    {
-      user  = var.dba_user,
-      hosts = var.node_hosts
-    }
-  )
 }
 
 data "cloudinit_config" "config" {
@@ -53,8 +38,6 @@ data "cloudinit_config" "config" {
       local.cloud_config,
       {
         aws_conf            = base64encode(local.aws_conf),
-        vertica_conf        = base64encode(local.vertica_conf),
-        install_script      = base64encode(local.install_script),
         private_install_key = base64encode(var.private_install_key)
       }
     )
@@ -62,7 +45,7 @@ data "cloudinit_config" "config" {
 
   part {
     content_type = "text/x-shellscript"
-    content      = local.ssh_init
-    filename     = "ssh-init.sh"
+    content      = local.install_vertica
+    filename     = "install_vertica.sh"
   }
 }
