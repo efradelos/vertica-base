@@ -1,9 +1,14 @@
-output "management_ip" {
-  description = "Public IP of Managment Console"
-  value       = aws_instance.management[0].public_ip
+output "node_ids" {
+  description = "List of node ids"
+  value       = module.vertica_nodes.ids
 }
 
-output "node_ips" {
+output "node_public_ips" {
+  description = "List of public ips of nodes"
+  value       = module.vertica_nodes.public_ips
+}
+
+output "node_private_ips" {
   description = "List of private ips of nodes"
-  value       = aws_instance.nodes.*.private_ip
+  value       = module.vertica_nodes.private_ips
 }
