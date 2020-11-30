@@ -33,6 +33,7 @@ resource "aws_instance" "bastion" {
 }
 
 resource "aws_eip_association" "eip_assoc" {
+  count         = var.bastion_allocation_id == "" ? 0 : 1
   instance_id   = aws_instance.bastion.id
-  allocation_id = var.allocation_id
+  allocation_id = var.bastion_allocation_id
 }

@@ -7,8 +7,8 @@ ssh ${hosts[0]} bash << EOF
     --hosts ${ join(",", hosts) } \
     --data-dir ${data_dir} \
     --temp-dir ${temp_dir} \
-    --dba-user ${dba_user} \
-    --ssh-identity /home/${dba_user}/.ssh/id_rsa \
+    --dba-user ${user} \
+    --ssh-identity /home/${user}/.ssh/id_rsa \
     --license ${license}
 
   echo "$aws_config" > aws.conf

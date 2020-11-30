@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 resource "aws_key_pair" "ssh_key_pair" {
-  count      = var.create_ssh_key_pair
+  count      = var.create_ssh_key_pair ? 1 : 0
   key_name   = var.ssh_key_name
   public_key = file(var.ssh_key_path)
 }
@@ -29,15 +29,24 @@ module "bastion" {
 
   bastion_ami           = var.bastion_ami
   bastion_instance_type = var.bastion_instance_type
-  allocation_id         = var.bastion_allocation_id
+  bastion_allocation_id = var.bastion_allocation_id
   vpc_id                = var.vpc_id
-  dba_user              = var.dba_user
   subnet_id             = var.public_subnet_id
   key_name              = var.ssh_key_name
-  node_ips              = module.vertica_nodes.private_ips
+  node_hosts            = module.vertica_nodes.private_ips
   aws_region            = var.aws_region
   aws_access_key        = var.aws_access_key
   aws_secret_key        = var.aws_secret_key
+  dba_user              = var.dba_user
+  db_name               = var.db_name
+  db_password           = var.db_password
+  db_data_dir           = var.db_data_dir
+  db_temp_dir           = var.db_temp_dir
+  db_eon_mode           = var.db_eon_mode
+  db_shard_count        = var.db_shard_count
+  db_communal_storage   = var.db_communal_storage
+  db_license            = var.db_license
+  db_depot_path         = var.db_depot_path
   private_install_key   = file(var.private_install_key)
 }
 

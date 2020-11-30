@@ -10,41 +10,47 @@ variable "dba_user" {
 
 variable "db_name" {
   description = "The name of the database"
-  default = "database-1"
+  default     = "database-1"
 }
 
 variable "db_password" {
   description = "The password to use for database"
-  default = "admin"
+  default     = "admin"
 }
 
-variable "db_data_dir" { 
+variable "db_data_dir" {
   description = "Specify the directory for database data and catalog files"
-  default = "/home/data"
+  default     = "/home/data"
 }
 
-variable "db_temp_dir" { 
+variable "db_temp_dir" {
   description = "The temporary directory used for administrative purposes."
-  default = "/tmp"
+  default     = "/tmp"
 }
 
 variable "db_eon_mode" {
   description = "Should use EON mode for database"
-  default = true
+  default     = true
 }
 
 variable "db_shard_count" {
   description = "Shard count for database.  (EON Mode only)"
-  default = 6
+  default     = 6
 }
 
-variable "db_communal_storage" { 
+variable "db_communal_storage" {
   description = "S3 Location of Communal Storage.  (EON Mode only)"
+  default     = ""
 }
 
-variable "db_depot_path" { 
+variable "db_license" {
+  description = "The license to use for cluster"
+  default     = "CE"
+}
+
+variable "db_depot_path" {
   description = "Path to depot directory.  (EON Mode only)"
-  default = "/vertica/data"
+  default     = "/vertica/data"
 }
 
 
@@ -70,10 +76,11 @@ variable "create_ssh_key_pair" {
 }
 variable "ssh_key_name" {
   description = "Name of key pair to use for ssh"
-
+  default     = "vertica-ssh-key"
 }
 variable "ssh_key_path" {
   description = "Path of public key for ssh. Only used of create_ssh_key_pair is true"
+  default     = ""
 }
 
 
@@ -111,6 +118,7 @@ variable "bastion_instance_type" {
 
 variable "bastion_allocation_id" {
   description = "Allocation id to use if wanting to use elastic ip"
+  default     = ""
 }
 
 variable "install_key" {
