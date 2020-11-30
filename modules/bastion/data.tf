@@ -21,7 +21,6 @@ locals {
     {
       hosts            = var.node_hosts,
       data_dir         = var.db_data_dir,
-      temp_dir         = var.db_temp_dir,
       user             = var.dba_user,
       license          = var.db_license,
       database         = var.db_name,

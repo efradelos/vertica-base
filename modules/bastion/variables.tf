@@ -5,7 +5,6 @@ variable "aws_region" {}
 variable "vpc_id" { description = "ID of VPC to install bastion" }
 variable "subnet_id" { description = "ID of subnet to install bastion" }
 
-
 variable "node_hosts" { description = "Host that will form cluster" }
 
 variable "dba_user" {
@@ -15,7 +14,7 @@ variable "dba_user" {
 
 variable "db_name" {
   description = "The name of the database"
-  default     = "database-1"
+  default     = "db1"
 }
 
 variable "db_password" {
@@ -26,11 +25,6 @@ variable "db_password" {
 variable "db_data_dir" {
   description = "Specify the directory for database data and catalog files"
   default     = "/home/data"
-}
-
-variable "db_temp_dir" {
-  description = "The temporary directory used for administrative purposes."
-  default     = "/tmp"
 }
 
 variable "db_license" {

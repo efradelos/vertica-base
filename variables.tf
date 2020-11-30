@@ -10,7 +10,7 @@ variable "dba_user" {
 
 variable "db_name" {
   description = "The name of the database"
-  default     = "database-1"
+  default     = "db1"
 }
 
 variable "db_password" {
@@ -21,11 +21,6 @@ variable "db_password" {
 variable "db_data_dir" {
   description = "Specify the directory for database data and catalog files"
   default     = "/home/data"
-}
-
-variable "db_temp_dir" {
-  description = "The temporary directory used for administrative purposes."
-  default     = "/tmp"
 }
 
 variable "db_eon_mode" {

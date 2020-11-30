@@ -41,7 +41,6 @@ module "bastion" {
   db_name               = var.db_name
   db_password           = var.db_password
   db_data_dir           = var.db_data_dir
-  db_temp_dir           = var.db_temp_dir
   db_eon_mode           = var.db_eon_mode
   db_shard_count        = var.db_shard_count
   db_communal_storage   = var.db_communal_storage
