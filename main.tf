@@ -4,6 +4,11 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
+resource "tls_private_key" "install_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "aws_key_pair" "ssh_key_pair" {
   count      = var.create_ssh_key_pair ? 1 : 0
   key_name   = var.ssh_key_name
@@ -21,7 +26,7 @@ module "vertica_nodes" {
   node_volume_size   = var.node_volume_size
   dba_user           = var.dba_user
   key_name           = var.ssh_key_name
-  install_key        = file(var.install_key)
+  install_key        = tls_private_key.install_key.public_key_openssh
 }
 
 module "bastion" {
@@ -46,7 +51,7 @@ module "bastion" {
   db_communal_storage   = var.db_communal_storage
   db_license            = var.db_license
   db_depot_path         = var.db_depot_path
-  private_install_key   = file(var.private_install_key)
+  private_install_key   = tls_private_key.install_key.private_key_pem
 }
 
 module "lb" {
