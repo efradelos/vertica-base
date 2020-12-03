@@ -115,16 +115,6 @@ variable "bastion_allocation_id" {
   default     = ""
 }
 
-variable "install_key" {
-  description = "Path to public key used for one time ssh configutation"
-  default     = "secrets/install.pub"
-}
-
-variable "private_install_key" {
-  description = "Path to private key used for one time ssh configutation"
-  default     = "secrets/install"
-}
-
 variable "create_lb" {
   description = "Create a loadbalancer to access nodes in cluster"
   default     = false
