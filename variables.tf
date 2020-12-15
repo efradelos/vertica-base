@@ -115,6 +115,11 @@ variable "bastion_allocation_id" {
   default     = ""
 }
 
+variable "create_bastion" {
+  description = "Create a bastion to access nodes in cluster"
+  default     = false
+}
+
 variable "create_lb" {
   description = "Create a loadbalancer to access nodes in cluster"
   default     = false

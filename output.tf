@@ -1,18 +1,3 @@
-output "bastion_id" {
-  description = "Instance ID of Bastion"
-  value       = module.bastion.id
-}
-
-output "bastion_public_ip" {
-  description = "Public IP of bastion"
-  value       = module.bastion.public_ip
-}
-
-output "bastion_private_ip" {
-  description = "Private IP of bastion"
-  value       = module.bastion.private_ip
-}
-
 output "node_ids" {
   description = "List of node ids"
   value       = module.vertica_nodes.ids
@@ -30,5 +15,20 @@ output "node_private_ips" {
 
 output "lb_dns_name" {
   description = "DNS Name of Load Balancer"
-  value       = module.lb.*.dns_name
+  value       = var.create_lb ? module.lb.0.dns_name : ""
+}
+
+output "bastion_id" {
+  description = "Instance ID of Bastion"
+  value       = var.create_bastion ? module.bastion.id : ""
+}
+
+output "bastion_public_ip" {
+  description = "Public IP of bastion"
+  value       = var.create_bastion ? module.bastion.public_ip : ""
+}
+
+output "bastion_private_ip" {
+  description = "Private IP of bastion"
+  value       = var.create_bastion ? module.bastion.private_ip : ""
 }

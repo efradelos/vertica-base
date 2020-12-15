@@ -33,18 +33,36 @@ resource "aws_security_group" "vertica_node" {
   }
 }
 
-resource "aws_instance" "nodes" {
-  count                  = var.node_count
+resource "aws_instance" "secondary_nodes" {
+  count                  = var.node_count - 1
   ami                    = var.node_ami
   instance_type          = var.node_instance_type
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.vertica_node.id]
   key_name               = var.key_name
-  user_data_base64       = data.cloudinit_config.config.rendered
+  user_data_base64       = data.cloudinit_config.secondary_config.rendered
 
   tags = {
     Platform = "vertica"
-    Name     = "vertica-node-${count.index + 1}"
+    Name     = "vertica-node-${count.index + 2}"
+  }
+
+  root_block_device {
+    volume_size = var.node_volume_size
+  }
+}
+
+resource "aws_instance" "primary_node" {
+  ami                    = var.node_ami
+  instance_type          = var.node_instance_type
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.vertica_node.id]
+  key_name               = var.key_name
+  user_data_base64       = data.cloudinit_config.primary_config.rendered
+
+  tags = {
+    Platform = "vertica"
+    Name     = "vertica-node-1"
   }
 
   root_block_device {

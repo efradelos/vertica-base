@@ -24,7 +24,6 @@ resource "aws_instance" "bastion" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.allow-ssh.id]
   key_name               = var.key_name
-  user_data_base64       = data.cloudinit_config.config.rendered
 
   tags = {
     Platform = "vertica"
