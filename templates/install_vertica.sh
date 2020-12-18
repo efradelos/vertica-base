@@ -2,7 +2,6 @@
 
 chown -R ${user} /tmp/deploy
 
-aws_config=`cat /tmp/deploy/aws.conf`
 localhost=`curl http://169.254.169.254/latest/meta-data/hostname`
 
 cat << EOF | su - ${user}
@@ -25,7 +24,6 @@ cat << EOF | su - ${user}
     --ssh-identity /home/${user}/.ssh/id_rsa \
     --license ${license}
 
-  echo "$aws_config" > aws.conf
   /opt/vertica/bin/admintools \
     --tool create_db \
     --database "${database}" \
@@ -33,10 +31,8 @@ cat << EOF | su - ${user}
     --hosts $localhost,${ join(",", hosts) } \
     --shard-count ${shard_count} \
     --communal-storage-location "${communal_storage}" \
-    --communal-storage-params aws.conf \
     --depot-path "${depot_path}"
 
-  rm aws.conf
 EOF
 
 rm -r /tmp/deploy

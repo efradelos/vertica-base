@@ -15,6 +15,106 @@ variable "private_subnet_id" {
   description = "ID of public subnet to install vertica cluster. Used for nodes"
 }
 
+# SSH key variables
+variable "create_ssh_key_pair" {
+  description = "Determines if AWS key pair for ssh is created"
+  default     = true
+}
+
+variable "ssh_key_name" {
+  description = "Name of key pair to use for ssh"
+  default     = "vertica-ssh-key"
+}
+
+variable "ssh_key_path" {
+  description = "Path of public key for ssh. Only used of create_ssh_key_pair is true"
+  default     = "secrets/vertica_key.pub"
+}
+
+# Security Group
+variable "create_security_group" {
+  description = "Determines if AWS security group is created"
+  default     = true
+}
+
+variable "security_group_name" {
+  description = "Name of security group that allows traffic for vertica communication"
+  default     = "vertica-sg"
+}
+
+
+# Communal Storage
+variable "create_communal_storage_bucket" {
+  description = "Determines if S3 buckets is created for communal storage (EON Mode only)"
+  default     = false
+}
+
+variable "communal_storage_bucket" {
+  description = "Name of S3 bucket used for communal storage (EON Mode only)"
+  default     = "vertica-communal-storage"
+}
+
+
+# Instance Profile
+variable "create_instance_profile" {
+  description = "Determines if instance profile should be created"
+  default     = false
+}
+
+variable "instance_profile_name" {
+  description = "Name of instance profilie to use for ec2 instances"
+  default     = "vertica-instance-profile"
+}
+
+
+# Management Console variables
+variable "create_mc" {
+  description = "Create a vertica managment console"
+  default     = false
+}
+
+variable "mc_ami" {
+  description = "AMI to use for management console"
+  default     = "ami-083bcfe5f5bf588bd"
+}
+
+variable "mc_instance_type" {
+  description = "Instance type to use for management console"
+  default     = "c5.large"
+}
+
+variable "mc_username" {
+  description = "Username for logging into Management Console"
+  default     = "mcadmin"
+}
+
+variable "mc_password" {
+  description = "Password for logging into Management Console"
+  default     = "change-me"
+}
+
+
+# Node variables
+variable "node_count" {
+  description = "Number of nodes in cluster"
+  default     = 3
+}
+
+variable "node_ami" {
+  description = "AMI to use for each node in cluster"
+  default     = "ami-083bcfe5f5bf588bd"
+}
+
+variable "node_instance_type" {
+  description = "Instance type to use for each node in cluster"
+  default     = "c5.large"
+}
+
+variable "node_volume_size" {
+  description = "Volume size for each node in cluster (in GB)"
+  default     = 50
+}
+
 # DB Variables
 variable "dba_user" {
   description = "The name of the db user account"
@@ -61,65 +161,12 @@ variable "db_depot_path" {
   default     = "/vertica/data"
 }
 
-
-# SSH key variables
-variable "create_ssh_key_pair" {
-  description = "Determines if AWS key pair for ssh is created"
-  default     = false
-
-}
-variable "ssh_key_name" {
-  description = "Name of key pair to use for ssh"
-  default     = "vertica-ssh-key"
-}
-variable "ssh_key_path" {
-  description = "Path of public key for ssh. Only used of create_ssh_key_pair is true"
-  default     = "secrets/key"
+variable "db_subcluster_name" {
+  description = "Name of the subcluster to create.  (EON Mode only)"
+  default     = "default_cluster"
 }
 
-
-# Node variables
-variable "node_count" {
-  description = "Number of nodes in cluster"
-  default     = 3
-}
-
-variable "node_ami" {
-  description = "AMI to use for each node in cluster"
-  default     = "ami-083bcfe5f5bf588bd"
-}
-
-variable "node_instance_type" {
-  description = "Instance type to use for each node in cluster"
-  default     = "c5.large"
-}
-
-variable "node_volume_size" {
-  description = "Volume size for each node in cluster (in GB)"
-  default     = 50
-}
-
-# Bastion variables
-variable "bastion_ami" {
-  description = "AMI to use for bastion"
-  default     = "ami-083bcfe5f5bf588bd"
-}
-
-variable "bastion_instance_type" {
-  description = "Instance type to use for bastion"
-  default     = "c5.large"
-}
-
-variable "bastion_allocation_id" {
-  description = "Allocation id to use if wanting to use elastic ip"
-  default     = ""
-}
-
-variable "create_bastion" {
-  description = "Create a bastion to access nodes in cluster"
-  default     = false
-}
-
+# Load Balancer
 variable "create_lb" {
   description = "Create a loadbalancer to access nodes in cluster"
   default     = false

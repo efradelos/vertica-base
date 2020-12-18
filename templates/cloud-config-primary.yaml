@@ -4,7 +4,3 @@ write_files:
     permissions: "0600"
     encoding: b64
     content: "${private_install_key}"
-  - path: /tmp/deploy/aws.conf
-    permissions: "0600"
-    encoding: b64
-    content: "${aws_conf}"
