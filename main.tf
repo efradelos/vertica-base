@@ -2,12 +2,6 @@ locals {
   nodes = var.node_count > 0 ? concat([aws_instance.primary_node.0], aws_instance.secondary_nodes.*) : []
 }
 
-provider "aws" {
-  region     = var.aws_region
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
-}
-
 resource "aws_key_pair" "ssh_key_pair" {
   count      = var.create_ssh_key_pair ? 1 : 0
   key_name   = var.ssh_key_name
