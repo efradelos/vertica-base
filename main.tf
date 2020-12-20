@@ -1,11 +1,20 @@
 locals {
-  nodes = var.node_count > 0 ? concat([aws_instance.primary_node.0], aws_instance.secondary_nodes.*) : []
+  nodes = var.node_count > 0 ? concat([aws_instance.primary_node[0]], aws_instance.secondary_nodes.*) : []
+  default_tags = merge(
+    {
+      Platform    = "vertica"
+      Environment = var.environment
+      Team        = var.team
+    },
+    var.additional_tags
+  )
 }
 
 resource "aws_key_pair" "ssh_key_pair" {
   count      = var.create_ssh_key_pair ? 1 : 0
   key_name   = var.ssh_key_name
   public_key = file(var.ssh_key_path)
+  tags       = local.default_tags
 }
 
 resource "aws_security_group" "vertica_sg" {
@@ -13,7 +22,7 @@ resource "aws_security_group" "vertica_sg" {
   vpc_id      = var.vpc_id
   name        = var.security_group_name
   description = "security group that allows traffic for vertica communication"
-
+  tags        = local.default_tags
 
   egress {
     from_port   = 0
@@ -64,20 +73,17 @@ resource "aws_s3_bucket" "communal_storage" {
     }
   }
 
-  # logging {
-  #   target_bucket = "logging-${var.aws_region}-${var.aws_account_number}"
-  #   target_prefix = "${var.bucket_prefix}/"
-  # }
-
-  tags = {
-    Platform = "vertica"
-    Name     = var.communal_storage_bucket
-  }
+  tags = merge(
+    {
+      Name = var.communal_storage_bucket
+    },
+    local.default_tags
+  )
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_block" {
   count  = var.create_communal_storage_bucket ? 1 : 0
-  bucket = aws_s3_bucket.communal_storage.0.id
+  bucket = aws_s3_bucket.communal_storage[0].id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -96,13 +102,13 @@ resource "aws_iam_role_policy" "role_policy" {
   count  = var.create_instance_profile ? 1 : 0
   name   = "VerticaFullAccess"
   policy = data.aws_iam_policy_document.full_access.json
-  role   = aws_iam_role.role.0.name
+  role   = aws_iam_role.role[0].name
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
   count = var.create_instance_profile ? 1 : 0
   name  = var.instance_profile_name
-  role  = aws_iam_role.role.0.name
+  role  = aws_iam_role.role[0].name
 }
 
 resource "aws_instance" "management_console" {
@@ -110,15 +116,12 @@ resource "aws_instance" "management_console" {
   ami                    = var.mc_ami
   instance_type          = var.mc_instance_type
   subnet_id              = var.public_subnet_id
-  vpc_security_group_ids = [aws_security_group.vertica_sg.0.id]
+  vpc_security_group_ids = [aws_security_group.vertica_sg[0].id]
   key_name               = var.ssh_key_name
   iam_instance_profile   = var.instance_profile_name
   user_data_base64       = data.cloudinit_config.config_mc.rendered
 
-  tags = {
-    Platform = "vertica"
-    Name     = "vertica-mc"
-  }
+  tags = merge({ Name = var.mc_name }, local.default_tags)
 }
 
 resource "aws_instance" "secondary_nodes" {
@@ -126,15 +129,17 @@ resource "aws_instance" "secondary_nodes" {
   ami                    = var.node_ami
   instance_type          = var.node_instance_type
   subnet_id              = var.private_subnet_id
-  vpc_security_group_ids = [aws_security_group.vertica_sg.0.id]
+  vpc_security_group_ids = [aws_security_group.vertica_sg[0].id]
   key_name               = var.ssh_key_name
   iam_instance_profile   = var.instance_profile_name
   user_data_base64       = data.cloudinit_config.config_secondary.rendered
 
-  tags = {
-    Platform = "vertica"
-    Name     = "vertica-node-${count.index + 2}"
-  }
+  tags = merge(
+    {
+      Name = join("-", [var.node_prefix, "${count.index + 2}"])
+    },
+    local.default_tags
+  )
 
   root_block_device {
     volume_size = var.node_volume_size
@@ -146,15 +151,17 @@ resource "aws_instance" "primary_node" {
   ami                    = var.node_ami
   instance_type          = var.node_instance_type
   subnet_id              = var.private_subnet_id
-  vpc_security_group_ids = [aws_security_group.vertica_sg.0.id]
+  vpc_security_group_ids = [aws_security_group.vertica_sg[0].id]
   key_name               = var.ssh_key_name
   iam_instance_profile   = var.instance_profile_name
   user_data_base64       = data.cloudinit_config.config_primary.rendered
 
-  tags = {
-    Platform = "vertica"
-    Name     = "vertica-node-1"
-  }
+  tags = merge(
+    {
+      Name = join("-", [var.node_prefix, "1"])
+    },
+    local.default_tags
+  )
 
   root_block_device {
     volume_size = var.node_volume_size
@@ -165,16 +172,14 @@ module "lb" {
   count  = var.create_lb ? 1 : 0
   source = "terraform-aws-modules/alb/aws"
 
-  name = "vertica-nodes-lb"
+  name = var.lb_name
 
   load_balancer_type = "network"
 
   vpc_id  = var.vpc_id
   subnets = [var.public_subnet_id]
 
-  # access_logs = {
-  #   bucket = "my-nlb-logs"
-  # }
+  tags = local.default_tags
 
   target_groups = [
     {
@@ -202,23 +207,19 @@ module "lb" {
       target_group_index = 1
     }
   ]
-
-  tags = {
-    Environment = "Test"
-  }
 }
 
 resource "aws_lb_target_group_attachment" "ssh_attachments" {
   count            = var.create_lb ? 1 : 0
-  target_group_arn = module.lb.0.target_group_arns.0
-  target_id        = aws_instance.primary_node.0.id
+  target_group_arn = module.lb[0].target_group_arns[0]
+  target_id        = aws_instance.primary_node[0].id
   port             = 22
 }
 
 resource "aws_lb_target_group_attachment" "db_attachments" {
   count = var.create_lb ? var.node_count : 0
 
-  target_group_arn = module.lb.0.target_group_arns.1
+  target_group_arn = module.lb[0].target_group_arns.1
   target_id        = local.nodes[count.index].id
   port             = 5433
 }

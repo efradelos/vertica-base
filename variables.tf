@@ -69,6 +69,11 @@ variable "create_mc" {
   default     = false
 }
 
+variable "mc_name" {
+  description = "Name of Management Console instance"
+  default     = "vertica-mc"
+}
+
 variable "mc_ami" {
   description = "AMI to use for management console"
   default     = "ami-083bcfe5f5bf588bd"
@@ -94,6 +99,11 @@ variable "mc_password" {
 variable "node_count" {
   description = "Number of nodes in cluster"
   default     = 3
+}
+
+variable "node_prefix" {
+  description = "Prefix to use for node names.  i.e. vertica-node will translate to vertica-node-1"
+  default     = "vertica-node"
 }
 
 variable "node_ami" {
@@ -166,4 +176,14 @@ variable "db_subcluster_name" {
 variable "create_lb" {
   description = "Create a loadbalancer to access nodes in cluster"
   default     = false
+}
+
+variable "lb_name" {
+  description = "Name of load balancer"
+  default     = "vertica-nodes-lb"
+}
+
+variable "additional_tags" {
+  description = "Additional tags to apply to all aws resources"
+  default     = {}
 }
