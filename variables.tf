@@ -74,6 +74,11 @@ variable "mc_name" {
   default     = "vertica-mc"
 }
 
+variable "mc_allocation_id" {
+  description = "Elastic IP id to use for management console (if any)"
+  default     = ""
+}
+
 variable "mc_ami" {
   description = "AMI to use for management console"
   default     = "ami-083bcfe5f5bf588bd"
@@ -176,6 +181,11 @@ variable "create_lb" {
 variable "lb_name" {
   description = "Name of load balancer"
   default     = "vertica-nodes-lb"
+}
+
+variable "lb_allocation_id" {
+  description = "Elastic IP id to use for load balancer (if any)"
+  default     = null
 }
 
 variable "additional_tags" {

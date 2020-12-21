@@ -122,6 +122,13 @@ resource "aws_instance" "management_console" {
   tags = merge({ Name = var.mc_name }, local.default_tags)
 }
 
+resource "aws_eip_association" "mc_allocation" {
+  count = var.create_mc && var.mc_allocation_id != "" ? 1 : 0
+
+  instance_id   = aws_instance.management_console[0].id
+  allocation_id = var.mc_allocation_id
+}
+
 resource "aws_instance" "secondary_nodes" {
   count                  = var.node_count > 0 ? var.node_count - 1 : 0
   ami                    = var.node_ami
@@ -170,14 +177,19 @@ module "lb" {
   count  = var.create_lb ? 1 : 0
   source = "terraform-aws-modules/alb/aws"
 
-  name = var.lb_name
-
+  name               = var.lb_name
   load_balancer_type = "network"
 
-  vpc_id  = var.vpc_id
-  subnets = [var.public_subnet_id]
+  vpc_id = var.vpc_id
 
   tags = local.default_tags
+
+  subnet_mapping = [
+    {
+      subnet_id     = var.public_subnet_id
+      allocation_id = var.lb_allocation_id
+    }
+  ]
 
   target_groups = [
     {
@@ -221,4 +233,3 @@ resource "aws_lb_target_group_attachment" "db_attachments" {
   target_id        = local.nodes[count.index].id
   port             = 5433
 }
-
