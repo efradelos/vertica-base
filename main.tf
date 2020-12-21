@@ -2,9 +2,7 @@ locals {
   nodes = var.node_count > 0 ? concat([aws_instance.primary_node[0]], aws_instance.secondary_nodes.*) : []
   default_tags = merge(
     {
-      Platform    = "vertica"
-      Environment = var.environment
-      Team        = var.team
+      Platform = "vertica"
     },
     var.additional_tags
   )
@@ -93,14 +91,14 @@ resource "aws_s3_bucket_public_access_block" "s3_block" {
 
 resource "aws_iam_role" "role" {
   count = var.create_instance_profile ? 1 : 0
-  name  = "ServiceRoleForVertica"
+  # name  = "ServiceRoleForVertica"
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
 resource "aws_iam_role_policy" "role_policy" {
-  count  = var.create_instance_profile ? 1 : 0
-  name   = "VerticaFullAccess"
+  count = var.create_instance_profile ? 1 : 0
+  # name   = "VerticaFullAccess"
   policy = data.aws_iam_policy_document.full_access.json
   role   = aws_iam_role.role[0].name
 }
@@ -136,7 +134,7 @@ resource "aws_instance" "secondary_nodes" {
 
   tags = merge(
     {
-      Name = join("-", [var.node_prefix, "${count.index + 2}"])
+      Name = join("-", [var.node_prefix, count.index + 2])
     },
     local.default_tags
   )
@@ -183,13 +181,13 @@ module "lb" {
 
   target_groups = [
     {
-      name             = "vertica-ssh-target-group"
+      # name             = "vertica-ssh-target-group"
       backend_port     = 22
       backend_protocol = "TCP"
     },
     {
       # name_prefix      = "pref-"
-      name             = "vertica-db-target-group"
+      # name             = "vertica-db-target-group"
       backend_port     = 5433
       backend_protocol = "TCP"
     },

@@ -167,11 +167,6 @@ variable "db_depot_path" {
   default     = "/vertica/data"
 }
 
-variable "db_subcluster_name" {
-  description = "Name of the subcluster to create.  (EON Mode only)"
-  default     = "default_cluster"
-}
-
 # Load Balancer
 variable "create_lb" {
   description = "Create a loadbalancer to access nodes in cluster"
