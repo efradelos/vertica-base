@@ -23,9 +23,9 @@ output "security_group_name" {
   value       = var.security_group_name
 }
 
-output "communal_storage_bucket" {
+output "db_communal_storage_location" {
   description = "Name of s3 bucket to hold communal data"
-  value       = var.communal_storage_bucket
+  value       = "s3://${var.db_communal_storage_bucket}/${var.db_communal_storage_key}"
 }
 
 output "mc_id" {

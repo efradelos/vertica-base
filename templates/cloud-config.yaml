@@ -5,8 +5,7 @@ packages:
   - gdb
   - mcelog
   - sysstat
-ssh_authorized_keys:
-  - ${install_key}
-timezone: America/Chicaogo
+  - jq
+timezone: America/Chicago
 bootcmd:
   - /sbin/blockdev --setra 2048 /dev/nvme0n1p1

@@ -11,8 +11,16 @@ variable "private_subnet_id" {
   description = "ID of public subnet to install vertica cluster. Used for nodes"
 }
 
+variable "rga_networks" {
+  type        = list(string)
+  description = "List of RGA networks"
+  default = [
+    "0.0.0.0/0", # TODO: Change default to actual rga networks
+  ]
+}
+
 # SSH key variables
-variable "create_ssh_key_pair" {
+variable "create_ssh_key" {
   description = "Determines if AWS key pair for ssh is created"
   default     = true
 }
@@ -43,11 +51,6 @@ variable "security_group_name" {
 variable "create_communal_storage_bucket" {
   description = "Determines if S3 buckets is created for communal storage (EON Mode only)"
   default     = false
-}
-
-variable "communal_storage_bucket" {
-  description = "Name of S3 bucket used for communal storage (EON Mode only)"
-  default     = "vertica-communal-storage"
 }
 
 
@@ -152,14 +155,19 @@ variable "db_eon_mode" {
   default     = true
 }
 
+variable "db_communal_storage_bucket" {
+  description = "Name of S3 bucket used for communal storage (EON Mode only)"
+  default     = "vertica-communal-storage"
+}
+
+variable "db_communal_storage_key" {
+  description = "Key for S3 bucket communal storage data (EON Mode only)"
+  default     = "data"
+}
+
 variable "db_shard_count" {
   description = "Shard count for database.  (EON Mode only)"
   default     = 6
-}
-
-variable "db_communal_storage" {
-  description = "S3 Location of Communal Storage.  (EON Mode only)"
-  default     = ""
 }
 
 variable "db_license" {

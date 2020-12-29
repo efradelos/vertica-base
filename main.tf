@@ -1,15 +1,19 @@
+resource "random_pet" "server" {}
+
 locals {
-  nodes = var.node_count > 0 ? concat([aws_instance.primary_node[0]], aws_instance.secondary_nodes.*) : []
+  nodes      = var.node_count > 0 ? concat([aws_instance.primary_node[0]], aws_instance.secondary_nodes.*) : []
+  cluster_id = "vertica-cluster-${random_pet.server.id}"
   default_tags = merge(
     {
       Platform = "vertica"
+      Cluster  = local.cluster_id
     },
     var.additional_tags
   )
 }
 
-resource "aws_key_pair" "ssh_key_pair" {
-  count      = var.create_ssh_key_pair ? 1 : 0
+resource "aws_key_pair" "ssh_key" {
+  count      = var.create_ssh_key ? 1 : 0
   key_name   = var.ssh_key_name
   public_key = file(var.ssh_key_path)
   tags       = local.default_tags
@@ -33,21 +37,21 @@ resource "aws_security_group" "vertica_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.rga_networks
   }
 
   ingress {
     from_port   = 5433
     to_port     = 5433
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.rga_networks
   }
 
   ingress {
     from_port   = 5450
     to_port     = 5450
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.rga_networks
   }
 
   ingress {
@@ -60,7 +64,7 @@ resource "aws_security_group" "vertica_sg" {
 
 resource "aws_s3_bucket" "communal_storage" {
   count  = var.create_communal_storage_bucket ? 1 : 0
-  bucket = var.communal_storage_bucket
+  bucket = var.db_communal_storage_bucket
   acl    = "private"
 
   server_side_encryption_configuration {
@@ -73,7 +77,7 @@ resource "aws_s3_bucket" "communal_storage" {
 
   tags = merge(
     {
-      Name = var.communal_storage_bucket
+      Name = var.db_communal_storage_bucket
     },
     local.default_tags
   )
@@ -91,14 +95,12 @@ resource "aws_s3_bucket_public_access_block" "s3_block" {
 
 resource "aws_iam_role" "role" {
   count = var.create_instance_profile ? 1 : 0
-  # name  = "ServiceRoleForVertica"
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
 resource "aws_iam_role_policy" "role_policy" {
-  count = var.create_instance_profile ? 1 : 0
-  # name   = "VerticaFullAccess"
+  count  = var.create_instance_profile ? 1 : 0
   policy = data.aws_iam_policy_document.full_access.json
   role   = aws_iam_role.role[0].name
 }
@@ -193,13 +195,10 @@ module "lb" {
 
   target_groups = [
     {
-      # name             = "vertica-ssh-target-group"
       backend_port     = 22
       backend_protocol = "TCP"
     },
     {
-      # name_prefix      = "pref-"
-      # name             = "vertica-db-target-group"
       backend_port     = 5433
       backend_protocol = "TCP"
     },
@@ -229,7 +228,7 @@ resource "aws_lb_target_group_attachment" "ssh_attachments" {
 resource "aws_lb_target_group_attachment" "db_attachments" {
   count = var.create_lb ? var.node_count : 0
 
-  target_group_arn = module.lb[0].target_group_arns.1
+  target_group_arn = module.lb[0].target_group_arns[1]
   target_id        = local.nodes[count.index].id
   port             = 5433
 }
