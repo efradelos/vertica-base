@@ -55,6 +55,7 @@ data "aws_iam_policy_document" "full_access" {
   statement {
     actions = [
       "ec2:DescribeInstances",
+      "ec2:DescribeImages",
       "ec2:DescribeInstanceTypeOfferings",
       "ec2:DescribeInstanceTypes",
       "ec2:DescribeInstanceStatus"
