@@ -147,10 +147,6 @@ resource "aws_instance" "secondary_nodes" {
     },
     local.default_tags
   )
-
-  root_block_device {
-    volume_size = var.node_volume_size
-  }
 }
 
 resource "aws_instance" "primary_node" {
@@ -169,10 +165,6 @@ resource "aws_instance" "primary_node" {
     },
     local.default_tags
   )
-
-  root_block_device {
-    volume_size = var.node_volume_size
-  }
 }
 
 module "lb" {

@@ -124,11 +124,6 @@ variable "node_instance_type" {
   default     = "c5.large"
 }
 
-variable "node_volume_size" {
-  description = "Volume size for each node in cluster (in GB)"
-  default     = 50
-}
-
 # DB Variables
 variable "dba_user" {
   description = "The name of the db user account"
