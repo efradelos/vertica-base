@@ -19,6 +19,10 @@ variable "rga_networks" {
   ]
 }
 
+variable "credentials_secret_name" {
+  description = "Name of aws secret to retrieve for credentials"
+}
+
 # SSH key variables
 variable "create_ssh_key" {
   description = "Determines if AWS key pair for ssh is created"
@@ -97,11 +101,6 @@ variable "mc_username" {
   default     = "mcadmin"
 }
 
-variable "mc_password" {
-  description = "Password for logging into Management Console"
-  default     = "change-me"
-}
-
 
 # Node variables
 variable "node_count" {
@@ -133,11 +132,6 @@ variable "dba_user" {
 variable "db_name" {
   description = "The name of the database"
   default     = "db1"
-}
-
-variable "db_password" {
-  description = "The password to use for database"
-  default     = "admin"
 }
 
 variable "db_data_dir" {
