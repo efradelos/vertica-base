@@ -4,23 +4,15 @@ variable "vpc_id" {
 }
 
 variable "public_subnet_id" {
-  description = "ID of public subnet to install vertica cluster. Used for bastion"
+  description = "ID of public subnet to install vertica cluster. Used for optional management console"
 }
 
 variable "private_subnet_id" {
   description = "ID of public subnet to install vertica cluster. Used for nodes"
 }
 
-variable "rga_networks" {
-  type        = list(string)
-  description = "List of RGA networks"
-  default = [
-    "0.0.0.0/0", # TODO: Change default to actual rga networks
-  ]
-}
-
-variable "credentials_secret_name" {
-  description = "Name of aws secret to retrieve for credentials"
+variable "credentials_secret_id" {
+  description = "ID of aws secret to retrieve for credentials"
 }
 
 # SSH key variables
@@ -48,6 +40,14 @@ variable "create_security_group" {
 variable "security_group_name" {
   description = "Name of security group that allows traffic for vertica communication"
   default     = "vertica-sg"
+}
+
+variable "rga_networks" {
+  type        = list(string)
+  description = "List of RGA networks"
+  default = [
+    "0.0.0.0/0", # TODO: Change default to actual rga networks
+  ]
 }
 
 
@@ -136,7 +136,7 @@ variable "db_name" {
 
 variable "db_data_dir" {
   description = "Specify the directory for database data and catalog files"
-  default     = "/home/data"
+  default     = "/vertica/data"
 }
 
 variable "db_eon_mode" {
@@ -159,9 +159,9 @@ variable "db_shard_count" {
   default     = 6
 }
 
-variable "db_license" {
-  description = "The license to use for cluster"
-  default     = "CE"
+variable "db_license_base64" {
+  description = "The license to use for cluster in base64 format. Leave null to use community edition"
+  default     = "VmVydGljYSBDb21tdW5pdHkgRWRpdGlvbiANCjIwMTEtMTEtMjINClBlcnBldHVhbA0KMA0KMVRCIENFIE5vZGVzIDMNCjc2NzlCQUI3NENENkUwRjNCQTU2QUNENkY1RENBRkVFOTBEREIwNTUwRTRGMDg2QzdERTEwQ0VCMTk2QUVGRThENDY1RjI3RTlDRjQ4RkIyQkE3NkNENjZDQTE5NTBCNDNEMDQ1N0VCQkU2NkVDMDc2QjIxQTY5OENDMUU2NTc5OTU2QTkwODJGNkQ5RDIyMTY1NzRDRDY2RjcxODg0NDUyODg2MjJGQTYzRkFDNURFODNBQjlDNjk3RjhFMzkxNTczQjlERDRCODAxNTlEMjNBNDU4Mjg2NjQ4RjlEQjJFMUNFMDYwMTkzNTgxRkZFNEZGMTg1NDNFRjEzOTZCQjRDOEFCNDdBNjA4RDU1QjZCQzk0RDVGMzRDNkQ4M0I5RjE4OTRDQjA4OTRDRjMzN0FGODlFQjkzRTc5RTIzQTIzRTE5REZGNkM2NDUyQjU5NTg3QUVGRDM2MTZCRkMwRjkwMzE4MThERkVBMjY4OUI3RUQ0OENFQzIyMjcyMTcwOTI3RUY2MzBENUQ5MjlGOENDOThFQ0VFN0NBMDQ2RkVERTFCRjM2NkM0RTc0MkYxREFDNkI3MzlGNzA5NDY0OEM1REQ2ODZBRjUxMzg0QkJBRUQ3RDEzRDcwNTlBMjU1NzRBQUFGNjI5NEY5QTc5N0FGOEI5NDEzMENDMUNDRTg3DQoNCg=="
 }
 
 variable "db_depot_path" {

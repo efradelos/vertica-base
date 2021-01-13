@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "full_access" {
 
   statement {
     actions = [
-      "ec2-instance-connect:SendSSHPublicKey",
+      "ec2-instance-connect:SendSSHPublicKey"
     ]
 
     resources = [
@@ -54,7 +54,18 @@ data "aws_iam_policy_document" "full_access" {
 
   statement {
     actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    resources = [
+      "arn:aws:secretsmanager:*:*:secret:${var.credentials_secret_id}*"
+    ]
+  }
+
+  statement {
+    actions = [
       "ec2:DescribeInstances",
+      "ec2:DescribeTags",
       "ec2:DescribeImages",
       "ec2:DescribeInstanceTypeOfferings",
       "ec2:DescribeInstanceTypes",

@@ -131,12 +131,19 @@ resource "aws_eip_association" "mc_allocation" {
   allocation_id = var.mc_allocation_id
 }
 
+resource "aws_placement_group" "cluster" {
+  name     = "vertica-cluster-${random_pet.server.id}-pg"
+  strategy = "cluster"
+  tags     = local.default_tags
+}
+
 resource "aws_instance" "secondary_nodes" {
   count                  = var.node_count > 0 ? var.node_count - 1 : 0
   ami                    = var.node_ami
   instance_type          = var.node_instance_type
   subnet_id              = var.private_subnet_id
   vpc_security_group_ids = [aws_security_group.vertica_sg[0].id]
+  placement_group        = aws_placement_group.cluster.id
   key_name               = var.ssh_key_name
   iam_instance_profile   = var.instance_profile_name
   user_data_base64       = data.cloudinit_config.config_secondary.rendered
@@ -155,6 +162,7 @@ resource "aws_instance" "primary_node" {
   instance_type          = var.node_instance_type
   subnet_id              = var.private_subnet_id
   vpc_security_group_ids = [aws_security_group.vertica_sg[0].id]
+  placement_group        = aws_placement_group.cluster.id
   key_name               = var.ssh_key_name
   iam_instance_profile   = var.instance_profile_name
   user_data_base64       = data.cloudinit_config.config_primary.rendered
